@@ -23,6 +23,7 @@ public class SimpleSumFunction extends ReduceFunction {
 			sum = sum + Double.parseDouble((String)entry);
 		}
 
+
 		
 		return sum;
 	}
