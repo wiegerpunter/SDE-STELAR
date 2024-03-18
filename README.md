@@ -51,6 +51,8 @@ Based on the Request's KEY - VALUE pair SDE performs different actions.
 |17|	WindowedQuantiles|	KEY| 	Quantile                  |	Quantiles	| keyField , ValueField, OperationMode, epsilon ( the maximum error bound ),windowSize                                                              |
 |18|	Radius Sketch Family| similarity score| 	List of streams/windows   |	similarity/distance| 	KeyField, ValueField, OperationMode,Group Size, Sketch Size,Window Size, Number of Groups, Threshold                                             |
 |30|   Spatial Sketch | KEY, minX, maxX, minY, maxY | Count in spatial range | Count | KeyField, ValueField, OperationMode, BasicSketchParameters, BasicSketchSynopsisID, minX, maxX, minY, maxY, maxResolution                          | 
+|31| OmniSketch | Attr1, Attr1Value, Attr2, Attr2Value, ... | Count with multi-dimensional predicates | Count| KeyField, ValueField, OperationMode, #Attributes, delta, epsilon, B, b, seed |
+|
 ---
 ### Full list of available Requests
 

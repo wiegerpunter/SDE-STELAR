@@ -7,6 +7,8 @@ import infore.SDE.messages.Estimation;
 import infore.SDE.messages.Request;
 import infore.SDE.synopses.Sketches.CM;
 
+import java.util.Arrays;
+
 public class CountMin extends Synopsis{
 
 	private CM cm;
@@ -15,7 +17,7 @@ public class CountMin extends Synopsis{
      super(uid,parameters[0],parameters[1], parameters[2]);
 	 cm = new CM(Double.parseDouble(parameters[3]),Double.parseDouble(parameters[4]),Integer.parseInt(parameters[5]));
 	}
-	 
+
 	@Override
 	public void add(Object k) {
 		//ObjectMapper mapper = new ObjectMapper();
@@ -57,6 +59,8 @@ public class CountMin extends Synopsis{
 
 		}
 		return new Estimation(rq, Double.toString((double)cm.estimateCount(Math.abs(rq.getParam()[0].hashCode()))), Integer.toString(rq.getUID()));
+
+		// + Arrays.toString(rq.getParam())
 
 
 	}

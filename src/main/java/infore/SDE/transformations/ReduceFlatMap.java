@@ -6,6 +6,7 @@ import infore.SDE.reduceFunctions.WLSH_Reduce;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.util.Collector;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ReduceFlatMap extends RichFlatMapFunction<Estimation, Estimation> {
@@ -18,18 +19,15 @@ public class ReduceFlatMap extends RichFlatMapFunction<Estimation, Estimation> {
 
     @Override
     public void flatMap(Estimation value, Collector<Estimation> out){
-
         ReduceFunction t_rf = rf.get("" + value.getEstimationkey());
         int id = value.getSynopsisID();
-        String key  = value.getEstimationkey();
-
+        String key = value.getEstimationkey();
             if (t_rf == null){
 
                 t_rf = initReduceFunction(value, id);
                 rf.put("" + key, t_rf);
 
             }else{
-
                 if (t_rf.add(value)) {
                     Object output = t_rf.reduce();
                     if (output != null) {
@@ -102,6 +100,20 @@ public class ReduceFlatMap extends RichFlatMapFunction<Estimation, Estimation> {
             t_rf = new WDFT_Reduce(value.getNoOfP(), Double.parseDouble(value.getParam()[0]),Integer.parseInt(value.getParam()[0]),Integer.parseInt(value.getParam()[0]),stringToStringArray(value.getParam()[0]));
             //int workers, double th, int k, int t, String[] stock
             t_rf.add(value);
+        }
+        else if (id == 30) {
+            String[] params = value.getParam();
+            if (params.length != 6) {
+                throw new UnsupportedOperationException("Invalid number of parameters");
+            }
+            int basicSketchID = Integer.parseInt(params[1]);
+            if (basicSketchID != 1) {
+                throw new UnsupportedOperationException("Basic Sketch not available");
+            }
+            t_rf = new SimpleSumFunction(value.getNoOfP(), 0, value.getParam(), value.getSynopsisID(), value.getRequestID());
+        }
+        else if (id == 31) {
+            t_rf = new SimpleSumFunction(value.getNoOfP(), 0, value.getParam(), value.getSynopsisID(), value.getRequestID());
         }
         return t_rf;
     }
