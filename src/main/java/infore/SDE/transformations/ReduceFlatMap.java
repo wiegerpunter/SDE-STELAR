@@ -22,25 +22,24 @@ public class ReduceFlatMap extends RichFlatMapFunction<Estimation, Estimation> {
         ReduceFunction t_rf = rf.get("" + value.getEstimationkey());
         int id = value.getSynopsisID();
         String key = value.getEstimationkey();
-            if (t_rf == null){
+        if (t_rf == null){
+            t_rf = initReduceFunction(value, id);
+            rf.put("" + key, t_rf);
 
-                t_rf = initReduceFunction(value, id);
-                rf.put("" + key, t_rf);
-
-            }else{
-                if (t_rf.add(value)) {
-                    Object output = t_rf.reduce();
-                    if (output != null) {
-                        value.setEstimation(output);
-                        rf.remove("" + key);
-                        if(id == 28)
-                            value.setEstimationkey(value.getUID()+"");
-                        out.collect(value);
-                    }
-
+        }else{
+            if (t_rf.add(value)) {
+                Object output = t_rf.reduce();
+                if (output != null) {
+                    value.setEstimation(output);
+                    rf.remove("" + key);
+                    if(id == 28)
+                        value.setEstimationkey(value.getUID()+"");
+                    out.collect(value);
                 }
+
             }
         }
+    }
 
     private ReduceFunction initReduceFunction(Estimation value, int id) {
         ReduceFunction t_rf = null;
@@ -67,6 +66,7 @@ public class ReduceFlatMap extends RichFlatMapFunction<Estimation, Estimation> {
                 new JoinEstimationFunction(value.getNoOfP(), 0, value.getParam(), value.getSynopsisID(), value.getRequestID());
             } else {
                 t_rf = new SimpleSumFunction(value.getNoOfP(), 0, value.getParam(), value.getSynopsisID(), value.getRequestID());
+                t_rf.add(value);
             }
         }
         //OR
@@ -111,9 +111,11 @@ public class ReduceFlatMap extends RichFlatMapFunction<Estimation, Estimation> {
                 throw new UnsupportedOperationException("Basic Sketch not available");
             }
             t_rf = new SimpleSumFunction(value.getNoOfP(), 0, value.getParam(), value.getSynopsisID(), value.getRequestID());
+            t_rf.add(value);
         }
         else if (id == 31) {
             t_rf = new SimpleSumFunction(value.getNoOfP(), 0, value.getParam(), value.getSynopsisID(), value.getRequestID());
+            t_rf.add(value);
         }
         return t_rf;
     }
